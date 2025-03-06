@@ -1,5 +1,6 @@
 package com.alom.reeltalkbe.user.jwt;
 
+import com.alom.reeltalkbe.common.exception.BaseException;
 import com.alom.reeltalkbe.common.response.BaseResponse;
 import com.alom.reeltalkbe.common.response.BaseResponseStatus;
 import com.alom.reeltalkbe.user.domain.RefreshEntity;
@@ -44,19 +45,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             // JSON 요청을 읽어와서 username과 password를 추출
             Map<String, String> requestBody = objectMapper.readValue(request.getInputStream(), Map.class);
-            String username = requestBody.get("username");
+            String email = requestBody.get("email");
             String password = requestBody.get("password");
 
-            System.out.println("로그인 요청 - username: " + username);
+            //System.out.println("로그인 요청 - username: " + username);
 
             // 스프링 시큐리티에서 username과 password를 검증하기 위해 토큰 생성
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
             // AuthenticationManager를 사용하여 인증 진행
             return authenticationManager.authenticate(authToken);
 
         } catch (IOException e) {
-            throw new RuntimeException("로그인 요청 JSON 파싱 중 오류 발생", e);
+            throw new BaseException(BaseResponseStatus.JSON_PARSE_ERROR);
         }
     }
 
@@ -109,7 +110,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             objectMapper.writeValue(response.getWriter(), responseBody);
         } catch (IOException e) {
-            throw new RuntimeException("로그인 성공 응답 JSON 변환 중 오류 발생", e);
+            throw new BaseException(BaseResponseStatus.JSON_CONVERT_ERROR);
         }
     }
 
@@ -126,7 +127,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             objectMapper.writeValue(response.getWriter(), responseBody);
         } catch (IOException e) {
-            throw new RuntimeException("로그인 실패 응답 JSON 변환 중 오류 발생", e);
+            throw new BaseException(BaseResponseStatus.JSON_CONVERT_ERROR);
         }
     }
 
@@ -153,13 +154,4 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         refreshRepository.save(refreshEntity);
     }
 
-//    private Cookie createCookie(String key, String value) {
-//        Cookie cookie = new Cookie(key, value);
-//        cookie.setMaxAge(24 * 60 * 60);
-//        cookie.setSecure(false); // 개발 환경에서는 false (운영에서는 true)
-//        cookie.setHttpOnly(true);
-//        cookie.setPath("/");
-//        cookie.setAttribute("SameSite", "None"); // ✅ 추가
-//        return cookie;
-//    }
 }

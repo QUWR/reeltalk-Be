@@ -1,5 +1,7 @@
 package com.alom.reeltalkbe.user.service;
 
+import com.alom.reeltalkbe.common.exception.BaseException;
+import com.alom.reeltalkbe.common.response.BaseResponseStatus;
 import com.alom.reeltalkbe.user.domain.User;
 import com.alom.reeltalkbe.user.dto.CustomUserDetails;
 import com.alom.reeltalkbe.user.repository.UserRepository;
@@ -20,13 +22,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<User> res = userRepository.findByUsername(username);
-        if (res.isEmpty()) {
-            throw new UsernameNotFoundException(username);
-        }
-        User user = res.get();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NON_EXIST_USER));
+
         return new CustomUserDetails(user);
     }
 

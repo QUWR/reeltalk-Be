@@ -6,10 +6,12 @@ import com.alom.reeltalkbe.content.domain.GenreListConverter;
 import com.alom.reeltalkbe.review.domain.Review;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Convert;
+import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -19,7 +21,6 @@ public class MovieTabResponse {
     private Long id;
     private boolean adult;
 
-    @JsonProperty("backdrop_path")
     private String backdropPath;
 
     @Convert(converter = GenreListConverter.class)
@@ -30,18 +31,16 @@ public class MovieTabResponse {
     private double popularity;
     private double rating;
 
-    @JsonProperty("poster_path")
     private String posterPath;
 
-    @JsonProperty("release_date")
-    private String releaseDate;
+    private LocalDate releaseDate;
 
     private String title;
 
-    private List<Review> reviews;
+    private List<ReviewResponse> reviews;
 
     @Builder
-    private MovieTabResponse(Content content, List<Review> reviews) {
+    private MovieTabResponse(Content content, List<ReviewResponse> reviews) {
         id = content.getId();
         adult = content.isAdult();
         backdropPath = content.getBackdropPath();
@@ -52,12 +51,17 @@ public class MovieTabResponse {
         posterPath = content.getPosterPath();
         releaseDate = content.getReleaseDate();
         title = content.getEnTitle();
+        this.reviews = reviews;
     }
 
     public static MovieTabResponse of(Content content, List<Review> reviews) {
+        List<ReviewResponse> reviewResponses = reviews.stream()
+            .map(ReviewResponse::of)
+            .toList();
+
         return MovieTabResponse.builder()
                 .content(content)
-                .reviews(reviews)
+                .reviews(reviewResponses)
                 .build();
     }
 }
