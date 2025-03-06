@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,6 +21,7 @@ public class CommentResponseDTO {
     private Long reviewId;
     private String content;
     private int likeCount;
+    private LocalDateTime createAt;
 
 
     public CommentResponseDTO(Comment comment) {
@@ -28,5 +31,6 @@ public class CommentResponseDTO {
         reviewId = comment.getReview().getId();
         content = comment.getContent();
         likeCount = comment.getLikeCount();
+        createAt = comment.getCreatedAt();
     }
 }
