@@ -1,5 +1,6 @@
 package com.alom.reeltalkbe.content.dto.TMDB;
 
+import com.alom.reeltalkbe.content.domain.Content;
 import com.alom.reeltalkbe.content.domain.Genre;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,6 @@ public class TMDBSeriesDetailsRequest {
 
     @JsonProperty("first_air_date")
     private LocalDate firstAirDate;
-    //private String firstAirDate;
 
     private List<Genre> genres;
 
@@ -46,7 +46,11 @@ public class TMDBSeriesDetailsRequest {
     @JsonProperty("last_episode_to_air")
     private EpisodeDto lastEpisodeToAir;
 
-    private String name;
+    @JsonProperty("name")
+    private String title;
+
+    @JsonProperty("original_name")
+    private String originalTitle;
 
     @JsonProperty("next_episode_to_air")
     private EpisodeDto nextEpisodeToAir;
@@ -64,9 +68,6 @@ public class TMDBSeriesDetailsRequest {
 
     @JsonProperty("original_language")
     private String originalLanguage;
-
-    @JsonProperty("original_name")
-    private String originalName;
 
     private String overview;
 
@@ -201,4 +202,9 @@ public class TMDBSeriesDetailsRequest {
         private String iso6391;
         private String name;
     }
+
+    public Content toEntity() {
+        return new Content(this);
+    }
+
 }
